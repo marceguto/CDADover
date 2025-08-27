@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análise Interativa da CDA Nº 70.6.94.003573-51</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: A single-page application with a vertical scrolling structure divided into thematic sections. A fixed sidebar navigation allows users to jump to any section. The structure starts with a summary (Visão Geral), followed by the history of the debt (Linha do Tempo), a detailed breakdown of the two main material errors (Análise dos Erros), a visual comparison of the financial impact (Impacto Financeiro), and finally the legal arguments (Fundamentação Jurídica). This thematic flow was chosen to guide the user from the general context to the specific details logically, making a complex legal and financial case easier to understand. Interactivity is focused on the data visualization, allowing users to compare different calculation scenarios. -->
+    <!-- Visualization & Content Choices: 
+        1.  Report Info: Chronology of CDA inscription. Goal: Organize/Change. Viz/Method: Interactive timeline using HTML/Tailwind. Interaction: Highlighting key events. Justification: A timeline is the most intuitive way to present a sequence of events and pinpoint where the error occurred.
+        2.  Report Info: Financial impact of errors (PGFN Cheio vs. PGFN Reduzido vs. Análise Pericial). Goal: Compare. Viz/Method: Bar Chart via Chart.js/Canvas. Interaction: Tooltips on hover provide exact values. Justification: A bar chart provides a powerful and immediate visual comparison of the discrepant values, making the magnitude of the error undeniable.
+        3.  Report Info: Breakdown of the two material errors. Goal: Inform. Viz/Method: Side-by-side text blocks with icons (HTML/Tailwind). Interaction: None. Justification: Clear, concise text is best for explaining the technical nature of the errors, supported by icons for quick visual association.
+        4.  Report Info: Legal arguments (STJ jurisprudence). Goal: Inform. Viz/Method: Styled cards (HTML/Tailwind). Interaction: None. Justification: Cards effectively segment and present distinct legal precedents in a readable format.
+        Library/Method: Chart.js for visualizations, Vanilla JS for interactivity, Tailwind CSS for styling. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fdfbf8;
+            color: #4a4a4a;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 400px;
+            max-height: 50vh;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 450px;
+            }
+        }
+        .nav-link {
+            transition: all 0.3s ease;
+        }
+        .nav-link.active {
+            background-color: #c7a17a;
+            color: #ffffff;
+            transform: translateX(5px);
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -21px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #c7a17a;
+            border: 2px solid #fdfbf8;
+        }
+    </style>
+</head>
+<body class="scroll-smooth">
+
+    <div class="flex min-h-screen">
+        <aside class="w-64 bg-[#f3ece4] p-6 hidden lg:flex flex-col fixed h-full">
+            <h2 class="text-xl font-bold text-[#6b4f4f] mb-8">Navegação</h2>
+            <nav id="desktop-nav" class="flex flex-col space-y-2">
+                <a href="#visao-geral" class="nav-link p-3 rounded-lg font-medium text-[#6b4f4f] hover:bg-[#e9dcd0]">Visão Geral</a>
+                <a href="#linha-do-tempo" class="nav-link p-3 rounded-lg font-medium text-[#6b4f4f] hover:bg-[#e9dcd0]">Linha do Tempo</a>
+                <a href="#analise-erros" class="nav-link p-3 rounded-lg font-medium text-[#6b4f4f] hover:bg-[#e9dcd0]">Análise dos Erros</a>
+                <a href="#impacto-financeiro" class="nav-link p-3 rounded-lg font-medium text-[#6b4f4f] hover:bg-[#e9dcd0]">Impacto Financeiro</a>
+                <a href="#fundamentacao" class="nav-link p-3 rounded-lg font-medium text-[#6b4f4f] hover:bg-[#e9dcd0]">Fundamentação Jurídica</a>
+            </nav>
+        </aside>
+
+        <main class="flex-1 lg:ml-64">
+            <div class="p-6 md:p-12">
+                
+                <section id="visao-geral" class="min-h-screen flex flex-col justify-center">
+                    <div class="max-w-4xl mx-auto text-center">
+                        <span class="text-sm font-semibold uppercase text-[#c7a17a]">Execução Fiscal Nº 0973084-81.1998.4.02.5110</span>
+                        <h1 class="text-4xl md:text-6xl font-bold text-[#6b4f4f] mt-4 mb-6">Análise de Erros Materiais na CDA Nº 70.6.94.003573-51</h1>
+                        <p class="text-lg md:text-xl text-gray-600 mb-8">Esta aplicação interativa demonstra a existência de vícios objetivos na inscrição da Certidão de Dívida Ativa, que resultaram em uma cobrança significativamente superior ao valor devido. O objetivo é apresentar os fatos de forma clara e técnica, apelando ao dever de autotutela da Administração Pública para a retificação do ato, em conformidade com os princípios da legalidade e da moralidade.</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+                           <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                               <h3 class="font-bold text-lg text-[#6b4f4f] mb-2">Valor Cobrado (Maio/2025)</h3>
+                               <p class="text-3xl font-bold text-red-600">R$ 893.777.594,36</p>
+                           </div>
+                           <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                               <h3 class="font-bold text-lg text-[#6b4f4f] mb-2">Valor Correto (Maio/2025)</h3>
+                               <p class="text-3xl font-bold text-green-600">R$ 448.261.702,38</p>
+                           </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="linha-do-tempo" class="py-20">
+                    <div class="max-w-4xl mx-auto">
+                        <h2 class="text-3xl font-bold text-center text-[#6b4f4f] mb-4">A Origem do Erro</h2>
+                        <p class="text-center text-gray-600 mb-12">A complexa cronologia da inscrição da dívida revela o ponto exato onde a falha operacional ocorreu, levando à cobrança indevida. A sucessão de documentos e órgãos envolvidos culminou em um equívoco na transcrição de datas, um erro material, não de critério jurídico.</p>
+                        <div class="relative border-l-2 border-dashed border-[#c7a17a] ml-4 pl-8">
+                            <div class="timeline-item mb-12">
+                                <h4 class="font-bold text-lg text-[#6b4f4f]">Junho de 1993</h4>
+                                <p class="text-gray-600">Banco do Brasil (BB) envia o primeiro demonstrativo de débito. A PGFN identifica a necessidade de ajustes e devolve o processo.</p>
+                            </div>
+                            <div class="timeline-item mb-12">
+                                <h4 class="font-bold text-lg text-[#6b4f4f]">Novembro de 1993</h4>
+                                <p class="text-gray-600">BB produz um novo demonstrativo, com valores atualizados até 26/11/1993. Uma primeira inscrição manual é realizada pela PGFN.</p>
+                            </div>
+                            <div class="timeline-item mb-12 bg-green-50 p-6 rounded-lg border-l-4 border-green-500">
+                                <h4 class="font-bold text-lg text-green-800">Agosto de 1994 - O Ato Decisivo</h4>
+                                <p class="text-green-700">A Secretaria do Tesouro Nacional (STN), órgão competente, intervém e elabora um demonstrativo técnico final, consolidando o valor do débito como integralmente atualizado até <span class="font-bold">19 de agosto de 1994</span>. Este documento deveria ser a base final e única para a inscrição.</p>
+                            </div>
+                            <div class="timeline-item mb-12 bg-red-50 p-6 rounded-lg border-l-4 border-red-500">
+                                <h4 class="font-bold text-lg text-red-800">Setembro de 1994 - O Erro Final</h4>
+                                <p class="text-red-700">A PGFN cancela a inscrição anterior para acatar o demonstrativo da STN. Contudo, ao realizar a terceira e definitiva inscrição, comete dois erros cruciais: 1) Adota a data de <span class="font-bold">26 de novembro de 1993</span> como o termo inicial dos encargos, causando duplicidade. 2) Lança o valor total consolidado (principal + juros) como se fosse apenas o "principal", gerando capitalização indevida de juros (anatocismo).</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="analise-erros" class="py-20 bg-white rounded-2xl">
+                    <div class="max-w-5xl mx-auto">
+                        <h2 class="text-3xl font-bold text-center text-[#6b4f4f] mb-4">Análise Detalhada dos Erros Materiais</h2>
+                        <p class="text-center text-gray-600 mb-12">A CDA está viciada por dois erros objetivos e tecnicamente comprováveis, que distorceram drasticamente o valor da dívida. Ambos decorrem da falha operacional na transcrição dos dados do demonstrativo final da STN.</p>
+                        
+                        <div class="p-8 rounded-xl border border-gray-200 shadow-sm mb-8">
+                            <div class="flex items-center mb-4">
+                                <span class="text-3xl mr-4">🗓️</span>
+                                <h3 class="text-xl font-bold text-[#6b4f4f]">Erro 1: Termo Inicial Indevido</h3>
+                            </div>
+                            <p class="text-gray-600 mb-6">Conforme se verifica no Demonstrativo de Débito, o débito foi calculado pela STN com aplicação de correção e juros até <span class="font-bold">19/08/1994</span>. Ocorre que a PGFN inscreveu o débito, erroneamente, como se esse mesmo valor em UFIR fosse devido desde <span class="font-bold">26/11/1993</span>, gerando dupla incidência de encargos. As imagens abaixo comprovam a discrepância.</p>
+                            
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <h4 class="font-semibold text-center mb-2">Demonstrativo da STN (fls. 160)</h4>
+                                    <img src="https://storage.googleapis.com/gemini-prod-us-central1-cbf2/images/22c06977-8874-4b53-b09e-715a2829d665.png" alt="Demonstrativo de débito da STN, mostrando data de conversão em 19/08/94." class="rounded-lg shadow-md border">
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-center mb-2">Certidão de Dívida Ativa (fls. 174)</h4>
+                                    <img src="https://storage.googleapis.com/gemini-prod-us-central1-cbf2/images/a57790b8-4c6c-482a-9f5b-d477e7486e92.png" alt="Certidão de Dívida Ativa mostrando data do vencimento em 26/11/93." class="rounded-lg shadow-md border">
+                                </div>
+                            </div>
+                             <p class="font-semibold text-red-600 mt-6 text-center">Consequência: Duplicidade de encargos por quase 9 meses.</p>
+                        </div>
+
+                        <div class="p-8 rounded-xl border border-gray-200 shadow-sm">
+                            <div class="flex items-center mb-4">
+                                <span class="text-3xl mr-4">➕</span>
+                                <h3 class="text-xl font-bold text-[#6b4f4f]">Erro 2: Capitalização de Juros (Anatocismo)</h3>
+                            </div>
+                            <p class="text-gray-600 mb-4">O valor total apurado pela STN (principal + juros operacionais + juros de mora) foi lançado integralmente no campo "Principal" da CDA. Com isso, todos os encargos subsequentes (SELIC, encargo legal) passaram a incidir sobre uma base que já continha juros.</p>
+                            <p class="font-semibold text-red-600">Consequência: Anatocismo sistêmico, vedado pela Súmula 121 do STF.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="impacto-financeiro" class="py-20">
+                    <div class="max-w-5xl mx-auto">
+                        <h2 class="text-3xl font-bold text-center text-[#6b4f4f] mb-4">O Impacto Financeiro dos Erros</h2>
+                        <p class="text-center text-gray-600 mb-12">A comparação entre os valores calculados segundo diferentes metodologias expõe a magnitude da distorção causada pelos erros materiais. Os dados abaixo, atualizados para maio de 2025, ilustram o excesso de cobrança.</p>
+                        <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-200">
+                            <div class="chart-container">
+                                <canvas id="impactoChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="fundamentacao" class="py-20">
+                    <div class="max-w-4xl mx-auto">
+                         <h2 class="text-3xl font-bold text-center text-[#6b4f4f] mb-4">Fundamentação Jurídica para a Retificação</h2>
+                        <p class="text-center text-gray-600 mb-12">A correção dos erros não é uma faculdade, mas um dever da Administração Pública, amparado por súmulas do STF e pela jurisprudência consolidada do STJ, que afasta a preclusão para matéria de ordem pública como o erro material.</p>
+                        <div class="space-y-6">
+                            <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-[#c7a17a]">
+                                <h3 class="font-bold text-lg text-[#6b4f4f] mb-2">Dever de Autotutela</h3>
+                                <p class="text-gray-600">A Administração tem o poder-dever de anular seus próprios atos quando eivados de vícios que os tornem ilegais. A manutenção de uma cobrança baseada em erro material viola os princípios da legalidade e da moralidade.</p>
+                                <p class="text-sm font-medium text-gray-500 mt-2">Fonte: Súmulas 346 e 473 do STF.</p>
+                            </div>
+                             <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-[#c7a17a]">
+                                <h3 class="font-bold text-lg text-[#6b4f4f] mb-2">Erro Material Não Preclui</h3>
+                                <p class="text-gray-600">O STJ distingue claramente "erro material" (equívoco aritmético, de digitação, uso de data errada) de "critério de cálculo". O erro material é matéria de ordem pública e pode ser corrigido a qualquer tempo, inclusive de ofício, não se sujeitando à preclusão ou à coisa julgada.</p>
+                                <p class="text-sm font-medium text-gray-500 mt-2">Fonte: AgInt no REsp 1.862.394/RS, AgRg no AREsp 176.573/PR.</p>
+                            </div>
+                            <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-[#c7a17a]">
+                                <h3 class="font-bold text-lg text-[#6b4f4f] mb-2">Reconhecimento Interno como Ato-Fato</h3>
+                                <p class="text-gray-600">A simulação interna da PGFN que apurou um valor reduzido constitui um ato-fato administrativo. Esse reconhecimento técnico gera efeitos jurídicos e vincula a Administração, que não pode adotar comportamento contraditório, sob pena de violar a boa-fé objetiva.</p>
+                                <p class="text-sm font-medium text-gray-500 mt-2">Princípio: Venire contra factum proprium.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const chartData = {
+                labels: ['PGFN Cheio (Cobrado)', 'PGFN Reduzido (Simulação Interna)', 'Análise Pericial (Correto)'],
+                datasets: [{
+                    label: 'Valor da Dívida em Maio/2025 (R$)',
+                    data: [893777594.36, 627812284.45, 448261702.38],
+                    backgroundColor: [
+                        'rgba(220, 38, 38, 0.7)',
+                        'rgba(234, 179, 8, 0.7)',
+                        'rgba(22, 163, 74, 0.7)'
+                    ],
+                    borderColor: [
+                        'rgba(220, 38, 38, 1)',
+                        'rgba(234, 179, 8, 1)',
+                        'rgba(22, 163, 74, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            };
+
+            const ctx = document.getElementById('impactoChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: chartData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(context.parsed.y);
+                                    }
+                                    return label;
+                                }
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Comparativo de Valores da Dívida (Maio/2025)',
+                            font: {
+                                size: 18,
+                                weight: 'bold'
+                            },
+                            color: '#6b4f4f'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value, index, values) {
+                                    return (value / 1000000).toLocaleString('pt-BR') + 'M';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.5
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href').substring(1) === entry.target.id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, observerOptions);
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    document.querySelector(link.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
